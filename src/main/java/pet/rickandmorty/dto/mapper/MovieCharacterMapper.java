@@ -9,7 +9,7 @@ import pet.rickandmorty.model.Status;
 
 @Component
 public class MovieCharacterMapper {
-    public MovieCharacter parseApiCharacterResponseDto(ApiCharacterDto dto) {
+    public MovieCharacter toModel(ApiCharacterDto dto) {
         MovieCharacter movieCharacter = new MovieCharacter();
         movieCharacter.setName(dto.getName());
         movieCharacter.setGender(Gender.valueOf(dto.getGender().toUpperCase()));

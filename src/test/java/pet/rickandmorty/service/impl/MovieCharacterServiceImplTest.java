@@ -63,7 +63,7 @@ class MovieCharacterServiceImplTest {
     @Test
     void saveDtosToDB_ok() {
         Mockito.when(repository.findAllByExternalIdIn(any())).thenReturn(Collections.emptyList());
-        Mockito.when(mapper.parseApiCharacterResponseDto(apiCharacterDto)).thenReturn(rickSanchez);
+        Mockito.when(mapper.toModel(apiCharacterDto)).thenReturn(rickSanchez);
         Assertions.assertEquals(1L, service.saveDtosToDB(apiResponseDto).size());
         Assertions.assertEquals("Rick Sanchez", service.saveDtosToDB(apiResponseDto).get(0).getName());
     }

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ import pet.rickandmorty.service.MovieCharacterService;
 @Service
 @RequiredArgsConstructor
 public class MovieCharacterServiceImpl implements MovieCharacterService {
+    @Value("${http.link}")
+    private String httpLink;
     private final HttpClient httpClient;
     private final MovieCharacterRepository movieCharacterRepository;
     private final MovieCharacterMapper movieCharacterMapper;
@@ -35,8 +38,7 @@ public class MovieCharacterServiceImpl implements MovieCharacterService {
     @Override
     public void syncExternalCharacters() {
         log.info("syncExternalCharacters method was invoked at " + LocalDateTime.now());
-        ApiResponseDto apiResponseDto = httpClient.get("https://rickandmortyapi.com/api/character",
-                ApiResponseDto.class);
+        ApiResponseDto apiResponseDto = httpClient.get(httpLink, ApiResponseDto.class);
         saveDtosToDB(apiResponseDto);
         while (apiResponseDto.getInfo().getNext() != null) {
             apiResponseDto = httpClient.get(apiResponseDto.getInfo().getNext(),
@@ -82,7 +84,7 @@ public class MovieCharacterServiceImpl implements MovieCharacterService {
         Set<Long> existingIds = existingCharactersWithIds.keySet();
         externalIds.removeAll(existingIds);
         List<MovieCharacter> charactersToSave = externalIds.stream()
-                .map(i -> movieCharacterMapper.parseApiCharacterResponseDto(externalDtos.get(i)))
+                .map(i -> movieCharacterMapper.toModel(externalDtos.get(i)))
                 .collect(Collectors.toList());
         movieCharacterRepository.saveAll(charactersToSave);
         return charactersToSave;

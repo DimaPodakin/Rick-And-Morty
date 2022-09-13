@@ -37,7 +37,7 @@ class MovieCharacterMapperTest {
 
     @Test
     void parseApiCharacterResponseDto_ok() {
-        MovieCharacter actual = mapper.parseApiCharacterResponseDto(characterDto);
+        MovieCharacter actual = mapper.toModel(characterDto);
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(1L, actual.getExternalId());
         Assertions.assertEquals("Rick", actual.getName());
